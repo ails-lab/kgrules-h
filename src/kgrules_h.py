@@ -33,7 +33,7 @@ def dissimilarity(q1, q2):
 
 def kgrules_h(queries, merge=greedy_matching, threshold=0):
 	"""
-	Implements the KGRules-H algorithm from ...
+	Implements the KGRules-H algorithm from \"In Search of Explanations in the Query Space\"
 	
 	Parameters:
 			queries (list of ConjunctiveQuery): The MSQs of the individuals to be explained.
