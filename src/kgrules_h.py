@@ -121,10 +121,10 @@ def main():
 
 	onto = owl.get_ontology("file://" + args.ontology_fname).load()
 
-	ind_to_query = {
-		"mnist": utils.mnist_ind_to_query,
-		"clevrhans": utils.clevrhans_ind_to_query,
-		"mushrooms": utils.mushroom_ind_to_query
+	ind_to_query, prefix = {
+		"mnist": (utils.mnist_ind_to_query, "http://sw.islab.ntua.gr/xai/mnist#"),
+		"clevrhans": (utils.clevrhans_ind_to_query, "http://sw.islab.ntua.gr/xai/CLEVR-Hans3#"),
+		"mushrooms": (utils.mushroom_ind_to_query, "http://sw.islab.ntua.gr/xai/Mushroom#"),
 	}[args.dataset]
 
 	with open(args.positives_fname, 'r') as fp:
@@ -132,7 +132,7 @@ def main():
 		positive_queries = [ind_to_query(onto[p]) for p in positives]
 	explanations = kgrules_h(positive_queries, merge=merge, threshold=args.threshold)
 	with open(args.output_fname, 'w') as fp:
-		fp.write('\n'.join([utils.expl_to_sparql(expl) for expl in explanations]))
+		fp.write('\n'.join([utils.expl_to_sparql(expl, prefix) for expl in explanations]))
 
 
 if __name__ == '__main__':

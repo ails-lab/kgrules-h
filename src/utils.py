@@ -45,12 +45,12 @@ def clevrhans_ind_to_query(individual):
 
 
 def mushroom_ind_to_query(individual):
-    concepts = np.empty((1), dtype=frozenset)
-    concepts[0] = frozenset([str(c).split('.')[-1] for c in individual.is_a])
+    concepts = np.empty((1), dtype=set)
+    concepts[0] = set([str(c).split('.')[-1] for c in individual.is_a])
     return ConjunctiveQuery(concepts=concepts)
 
 
-def expl_to_sparql(explanation, prefix="http://sw.islab.ntua.gr/xai/mnist#"):
+def expl_to_sparql(explanation, prefix):
     var_count = explanation.node_count
     var_string = ' '.join([
         ''.join([
