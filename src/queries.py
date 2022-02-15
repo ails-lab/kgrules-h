@@ -108,14 +108,6 @@ class ConjunctiveQuery:
         return str(self)
 
 
-    # def __hash__(self):
-    #   return hash(str(self))
-
-
-    # def __eq__(self, other):
-    #   return str(self) == str(other)
-
-
     def delete_node(self, i):
         self.node_count -= 1
         self.concepts = np.delete(self.concepts, i, 0)
@@ -160,17 +152,17 @@ class ConjunctiveQuery:
                                     adjacency_matrix[i,i] >= (adjacency_matrix[j,j]
                                                               or adjacency_matrix[i,j]
                                                               or adjacency_matrix[j,i])
-                                    and np.all(adjacency_matrix[i,:j] >= adjacency_matrix[j, :j])
+                                    and np.all(adjacency_matrix[i,:j] >= adjacency_matrix[j,:j])
                                     and np.all(adjacency_matrix[i,j+1:] >= adjacency_matrix[j,j+1:])
                                     and np.all(adjacency_matrix[:j,i] >= adjacency_matrix[:j,j])
                                     and np.all(adjacency_matrix[j+1:,i] >= adjacency_matrix[j+1:,j]) 
                                     ):
                                     break
-                                else:
-                                    node_deleted = True
-                                    self.delete_node(j)
-                                    if i > j:
-                                        i -= 1
+                            else:
+                                node_deleted = True
+                                self.delete_node(j)
+                                if i > j:
+                                    i -= 1
                     j -= 1
                 i -= 1
         return self

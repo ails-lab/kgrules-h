@@ -116,7 +116,7 @@ def main():
 
 	merge = {
 		'greedy-matching': greedy_matching,
-		'qlcs': lambda q1, q2: qlcs(q1, q2).remove_non_connected().minimize() 
+		'qlcs': lambda q1, q2: qlcs(q1, q2).remove_non_connected().approx_minimize() 
 	}[args.merge_operation]
 
 	onto = owl.get_ontology("file://" + args.ontology_fname).load()
