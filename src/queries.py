@@ -1,78 +1,8 @@
-from copy import deepcopy
-
 import numpy as np
 
+from src.heap import MaxHeap
+
 vlen = np.vectorize(len)
-
-
-class MaxHeap:
-    
-    def __init__(self, lst, lst_is_heap=False):
-        self.size = len(lst)
-        self.heap = deepcopy(lst)
-        self.indices = list(range(self.size))
-        if not lst_is_heap:
-            for i in reversed(range(self.size//2)):
-                self.siftup(i)
-    
-
-    def siftup(self, pos):
-        endpos = self.size
-        startpos = pos
-        newitem = self.heap[pos]
-
-        childpos = 2*pos + 1
-        while childpos < endpos:
-            rightpos = childpos + 1
-            if rightpos < endpos and self.heap[rightpos] >= self.heap[childpos]:
-                childpos = rightpos
-
-            self.heap[pos] = self.heap[childpos]
-            self.indices[self.heap[pos][1]] = pos
-            pos = childpos
-            childpos = 2*pos + 1
-        
-        self.heap[pos] = newitem
-        self.indices[newitem[1]] = pos
-        self.siftdown(startpos, pos)
-    
-
-    def siftdown(self, startpos, pos):
-        newitem = self.heap[pos]
-        while pos > startpos:
-            parentpos = (pos - 1) >> 1
-            parent = self.heap[parentpos]
-            if parent < newitem:
-                self.heap[pos] = parent
-                self.indices[parent[1]] = pos
-                pos = parentpos
-                continue
-            break
-        self.heap[pos] = newitem
-        self.indices[newitem[1]] = pos
-
-
-    def pop(self):
-        lastelt = self.heap.pop()
-        self.size -= 1
-        if self.heap:
-            returnitem = self.heap[0]
-            self.heap[0] = lastelt
-            self.indices[lastelt[1]] = 0
-            self.siftup(0)
-        else:
-            returnitem = lastelt
-        return returnitem
-
-
-    def increase_key(self, node, new_key):
-        ind = self.indices[node]
-        key, item = self.heap[ind]
-        if key > new_key:
-            raise ValueError()
-        self.heap[ind] = (new_key, item)
-        self.siftdown(0, ind)
-
 
 
 class ConjunctiveQuery:
@@ -96,17 +26,14 @@ class ConjunctiveQuery:
             self.out_degrees[role] = out_deg
         self.roles = roles
 
-
     def __str__(self):
         return '\n'.join((
             str(self.concepts),
             str(self.roles),
             ))
 
-    
     def __repr__(self):
         return str(self)
-
 
     def delete_node(self, i):
         self.node_count -= 1
@@ -115,7 +42,6 @@ class ConjunctiveQuery:
             self.roles[role] = np.delete(np.delete(self.roles[role], i, 0), i, 1)
 
         return self
-
 
     def remove_non_connected(self):
         stack = [0]
@@ -136,7 +62,6 @@ class ConjunctiveQuery:
 
         return self
 
-
     def approx_minimize(self):
         node_deleted = True
         while node_deleted:
@@ -148,15 +73,17 @@ class ConjunctiveQuery:
                     if i != j:
                         if self.concepts[i] >= self.concepts[j]:
                             for adjacency_matrix in self.roles.values():
-                                if not (
-                                    adjacency_matrix[i,i] >= (adjacency_matrix[j,j]
-                                                              or adjacency_matrix[i,j]
-                                                              or adjacency_matrix[j,i])
-                                    and np.all(adjacency_matrix[i,:j] >= adjacency_matrix[j,:j])
-                                    and np.all(adjacency_matrix[i,j+1:] >= adjacency_matrix[j,j+1:])
-                                    and np.all(adjacency_matrix[:j,i] >= adjacency_matrix[:j,j])
-                                    and np.all(adjacency_matrix[j+1:,i] >= adjacency_matrix[j+1:,j]) 
-                                    ):
+                                if not (adjacency_matrix[i,i] >= (adjacency_matrix[j,j]
+                                                                  or adjacency_matrix[i,j]
+                                                                  or adjacency_matrix[j,i])
+                                        and np.all(adjacency_matrix[i,:j]
+                                                   >= adjacency_matrix[j,:j])
+                                        and np.all(adjacency_matrix[i,j+1:]
+                                                   >= adjacency_matrix[j,j+1:])
+                                        and np.all(adjacency_matrix[:j,i]
+                                                   >= adjacency_matrix[:j,j])
+                                        and np.all(adjacency_matrix[j+1:,i]
+                                                   >= adjacency_matrix[j+1:,j])):
                                     break
                             else:
                                 node_deleted = True
