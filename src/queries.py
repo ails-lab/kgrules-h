@@ -1,6 +1,6 @@
 import numpy as np
 
-from src.heap import MaxHeap
+from heap import MaxHeap
 
 vlen = np.vectorize(len)
 
